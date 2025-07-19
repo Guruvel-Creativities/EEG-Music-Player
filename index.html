@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EEG Music Player</title>
+</head>
+<body>
+  <h1>EEG-based Music Player</h1>
+  <p id="emotion">Waiting for EEG...</p>
+  <audio id="player" controls autoplay>
+    <source src="" type="audio/mp3" />
+    Your browser does not support audio.
+  </audio>
+
+  <script>
+    const ws = new WebSocket('ws://192.168.4.1/emotion'); // ESP32 softAP IP
+    const audio = document.getElementById('player');
+    const emotionText = document.getElementById('emotion');
+
+    const musicMap = {
+      joy: "https://yourgithub.io/music/joy.mp3",
+      stress: "https://yourgithub.io/music/stress.mp3",
+      anger: "https://yourgithub.io/music/anger.mp3"
+    };
+
+    ws.onmessage = function (event) {
+      const emotion = event.data;
+      emotionText.textContent = "Detected: " + emotion;
+      if (musicMap[emotion]) {
+        audio.src = musicMap[emotion];
+        audio.play();
+      }
+    };
+  </script>
+</body>
+</html>
