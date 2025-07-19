@@ -1,37 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EEG Emotion Music Player</title>
+  <title>EEG Emotion-Based Music Player</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script>
     let currentEmotion = '';
-    let playlist = {
-      joy: ["music/joy1.mp3", "music/joy2.mp3"],
-      stress: ["music/stress1.mp3", "music/stress2.mp3"],
-      anger: ["music/anger1.mp3", "music/anger2.mp3"]
-    };
-    let audio = new Audio();
+    let playlist = [];
     let trackIndex = 0;
+    let audio = new Audio();
+    const BASE_URL = "https://yourusername.github.io/yourrepo/"; // CHANGE THIS to your GitHub repo or Firebase base
 
-    function updateEmotion(emotion) {
+    async function updateEmotion(emotion) {
+      if (!emotion || emotion === currentEmotion) return;
       currentEmotion = emotion;
       trackIndex = 0;
+      await loadPlaylist(emotion);
       playNext();
     }
 
+    async function loadPlaylist(emotion) {
+      try {
+        const res = await fetch(`${BASE_URL}${emotion}/playlist.json`);
+        const data = await res.json();
+        playlist = data.songs.map(song => `${BASE_URL}${emotion}/${song}`);
+      } catch (e) {
+        console.error("Failed to load playlist", e);
+        playlist = [];
+      }
+    }
+
     function playNext() {
-      if (!currentEmotion || playlist[currentEmotion].length === 0) return;
-      audio.src = playlist[currentEmotion][trackIndex];
+      if (playlist.length === 0) return;
+      audio.src = playlist[trackIndex];
       audio.play();
-      document.getElementById("nowPlaying").innerText = `Now playing: ${audio.src.split("/").pop()}`;
+      document.getElementById("nowPlaying").innerText = `Now playing: ${playlist[trackIndex].split('/').pop()}`;
     }
 
     function nextTrack() {
-      if (!currentEmotion) return;
-      trackIndex = (trackIndex + 1) % playlist[currentEmotion].length;
+      if (playlist.length === 0) return;
+      trackIndex = (trackIndex + 1) % playlist.length;
       playNext();
     }
 
@@ -43,7 +52,7 @@
 
     async function fetchEmotion() {
       try {
-        const res = await fetch("http://192.168.4.1/emotion"); // Replace with ESP32 local IP
+        const res = await fetch("http://192.168.4.1/emotion");
         const emotion = await res.text();
         updateEmotion(emotion.trim().toLowerCase());
       } catch (e) {
@@ -51,7 +60,7 @@
       }
     }
 
-    setInterval(fetchEmotion, 5000); // Check every 5 seconds
+    setInterval(fetchEmotion, 5000); // Every 5 sec
   </script>
 </head>
 
@@ -71,5 +80,4 @@
     <p class="mt-6 text-sm text-gray-400">Connect to device Wi-Fi to detect emotions. Hosted on GitHub Pages.</p>
   </div>
 </body>
-
 </html>
