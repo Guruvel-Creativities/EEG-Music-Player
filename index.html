@@ -1,35 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <title>EEG Music Player</title>
-</head>
-<body>
-  <h1>EEG-based Music Player</h1>
-  <p id="emotion">Waiting for EEG...</p>
-  <audio id="player" controls autoplay>
-    <source src="" type="audio/mp3" />
-    Your browser does not support audio.
-  </audio>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EEG Emotion Music Player</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script>
-    const ws = new WebSocket('ws://192.168.4.1/emotion'); // ESP32 softAP IP
-    const audio = document.getElementById('player');
-    const emotionText = document.getElementById('emotion');
-
-    const musicMap = {
-      joy: "https://yourgithub.io/music/joy.mp3",
-      stress: "https://yourgithub.io/music/stress.mp3",
-      anger: "https://yourgithub.io/music/anger.mp3"
+    let currentEmotion = '';
+    let playlist = {
+      joy: ["music/joy1.mp3", "music/joy2.mp3"],
+      stress: ["music/stress1.mp3", "music/stress2.mp3"],
+      anger: ["music/anger1.mp3", "music/anger2.mp3"]
     };
+    let audio = new Audio();
+    let trackIndex = 0;
 
-    ws.onmessage = function (event) {
-      const emotion = event.data;
-      emotionText.textContent = "Detected: " + emotion;
-      if (musicMap[emotion]) {
-        audio.src = musicMap[emotion];
-        audio.play();
+    function updateEmotion(emotion) {
+      currentEmotion = emotion;
+      trackIndex = 0;
+      playNext();
+    }
+
+    function playNext() {
+      if (!currentEmotion || playlist[currentEmotion].length === 0) return;
+      audio.src = playlist[currentEmotion][trackIndex];
+      audio.play();
+      document.getElementById("nowPlaying").innerText = `Now playing: ${audio.src.split("/").pop()}`;
+    }
+
+    function nextTrack() {
+      if (!currentEmotion) return;
+      trackIndex = (trackIndex + 1) % playlist[currentEmotion].length;
+      playNext();
+    }
+
+    function stopTrack() {
+      audio.pause();
+      audio.currentTime = 0;
+      document.getElementById("nowPlaying").innerText = "Stopped";
+    }
+
+    async function fetchEmotion() {
+      try {
+        const res = await fetch("http://192.168.4.1/emotion"); // Replace with ESP32 local IP
+        const emotion = await res.text();
+        updateEmotion(emotion.trim().toLowerCase());
+      } catch (e) {
+        console.error("Failed to fetch emotion", e);
       }
-    };
+    }
+
+    setInterval(fetchEmotion, 5000); // Check every 5 seconds
   </script>
+</head>
+
+<body class="bg-gray-900 text-white font-sans">
+  <div class="min-h-screen flex flex-col items-center justify-center p-6">
+    <h1 class="text-4xl font-bold mb-6 text-blue-400">EEG Emotion-Based Music Player</h1>
+
+    <div class="bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md">
+      <p id="nowPlaying" class="text-xl mb-4">Waiting for emotion signal...</p>
+      <div class="flex justify-around">
+        <button onclick="playNext()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-xl">Play</button>
+        <button onclick="nextTrack()" class="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded-xl">Next</button>
+        <button onclick="stopTrack()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl">Stop</button>
+      </div>
+    </div>
+
+    <p class="mt-6 text-sm text-gray-400">Connect to device Wi-Fi to detect emotions. Hosted on GitHub Pages.</p>
+  </div>
 </body>
+
 </html>
