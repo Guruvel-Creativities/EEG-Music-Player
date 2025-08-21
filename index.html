@@ -20,9 +20,7 @@
     display:flex;align-items:center;justify-content:center;padding:24px;
   }
   .app{ width:min(100%,980px); }
-  header{
-    display:flex; align-items:center; gap:16px; margin-bottom:16px;
-  }
+  header{ display:flex; align-items:center; gap:16px; margin-bottom:16px; }
   .logo{
     width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--accent-2),#a589ff);display:grid;place-items:center;
     box-shadow:0 10px 30px rgba(122,162,255,.35);
@@ -37,45 +35,25 @@
   }
   .row{display:grid;grid-template-columns: 1.2fr .8fr; gap:16px}
   @media (max-width:900px){ .row{grid-template-columns:1fr} }
-  .status{
-    display:flex; align-items:center; justify-content:space-between; gap:14px; padding:16px 18px; margin-bottom:16px;
-  }
-  .pill{
-    display:inline-flex; align-items:center; gap:10px;
-    padding:8px 14px; border-radius:999px; background:rgba(255,255,255,.06); color:var(--text);
-    border:1px solid rgba(255,255,255,.08);
-  }
+  .status{ display:flex; align-items:center; justify-content:space-between; gap:14px; padding:16px 18px; margin-bottom:16px; }
+  .pill{ display:inline-flex; align-items:center; gap:10px; padding:8px 14px; border-radius:999px; background:rgba(255,255,255,.06); color:var(--text); border:1px solid rgba(255,255,255,.08); }
   .dot{width:10px;height:10px;border-radius:999px;background:#ccc}
   .dot.ok{ background: var(--accent); box-shadow:0 0 0 4px rgba(104,211,145,.18) }
   .dot.bad{ background: var(--danger); box-shadow:0 0 0 4px rgba(255,122,122,.18) }
-  .emotion{
-    font-weight:800; letter-spacing:.3px; text-transform:uppercase; padding:8px 14px; border-radius:12px;
-    background:linear-gradient(135deg, rgba(104,211,145,.18), rgba(122,162,255,.18));
-    border:1px dashed rgba(255,255,255,.18);
-  }
-  /* Player */
+  .emotion{ font-weight:800; letter-spacing:.3px; text-transform:uppercase; padding:8px 14px; border-radius:12px; background:linear-gradient(135deg, rgba(104,211,145,.18), rgba(122,162,255,.18)); border:1px dashed rgba(255,255,255,.18); }
   .player{ padding:18px }
   .now{display:flex; align-items:center; gap:14px; margin-bottom:10px}
   .cover{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#343a62,#1d2036);flex:0 0 auto}
   .title{font-weight:700}
   .sub{color:var(--muted);font-size:13px}
   .controls{ display:flex; align-items:center; gap:10px; margin:12px 0 }
-  button{
-    background:#1a1f35; color:var(--text); border:1px solid rgba(255,255,255,.08);
-    padding:10px 14px; border-radius:12px; cursor:pointer;
-    transition: transform .05s ease, background .2s ease, border-color .2s ease;
-  }
+  button{ background:#1a1f35; color:var(--text); border:1px solid rgba(255,255,255,.08); padding:10px 14px; border-radius:12px; cursor:pointer; transition: transform .05s ease, background .2s ease, border-color .2s ease; }
   button:hover{ transform: translateY(-1px); background:#212746 }
   button.primary{ background:linear-gradient(135deg,var(--accent-2),#7ff0c3); color:#0e1326; border:none }
   .progress{ height:6px; background:#101326; border-radius:999px; position:relative; overflow:hidden }
   .bar{ position:absolute; inset:0 100% 0 0; background:linear-gradient(90deg,var(--accent-2), var(--accent)); }
-  /* Queue */
   .queue{ padding:8px; max-height:460px; overflow:auto }
-  .track{
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
-    padding:10px 12px; border-radius:12px; cursor:pointer;
-    border:1px solid transparent;
-  }
+  .track{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border-radius:12px; cursor:pointer; border:1px solid transparent; }
   .track:hover{ background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.06) }
   .track.active{ background:linear-gradient(135deg, rgba(122,162,255,.18), rgba(104,211,145,.18)); border-color:transparent }
   .small{ color:var(--muted); font-size:12px }
@@ -137,20 +115,23 @@
   /***********************
    * 1) CONFIGURE
    ***********************/
+  // GitHub
   const REPO = "Guruvel-Creativities/EEG-Music-Player"; 
   const BRANCH = "main";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAKUBe4zajk6R6kLqj2G_8ugQtjEnuPABQ",
-  authDomain: "eeg-music-player.firebaseapp.com",
-  databaseURL: "https://eeg-music-player-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "eeg-music-player",
-  storageBucket: "eeg-music-player.firebasestorage.app",
-  messagingSenderId: "926462980587",
-  appId: "1:926462980587:web:b12abf039eb40bfa11e9ae"
-};
-  
-  const EMOTION_PATHS = ["/currentEmotion"];
+  // Firebase (public read recommended). You can keep this the same as before.
+  const firebaseConfig = {
+    apiKey: "AIzaSyAKUBe4zajk6R6kLqj2G_8ugQtjEnuPABQ",
+    authDomain: "eeg-music-player.firebaseapp.com",
+    databaseURL: "https://eeg-music-player-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "eeg-music-player",
+    storageBucket: "eeg-music-player.firebasestorage.app",
+    messagingSenderId: "926462980587",
+    appId: "1:926462980587:web:b12abf039eb40bfa11e9ae"
+  };
+
+  // Support both schemas – your current is /currentEmotion; you can also switch to /emotion/current.
+  const EMOTION_PATHS = ["/currentEmotion", "/emotion/current"]; 
 
   /***********************
    * 2) APP LOGIC
@@ -186,6 +167,13 @@ const firebaseConfig = {
     return `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${path}`;
   }
 
+  function humanize(name){
+    return decodeURIComponent(name)
+      .replace(/\.[^/.]+$/, "")
+      .replace(/[-_]+/g, " ")
+      .replace(/\b\w/g, s => s.toUpperCase());
+  }
+
   function renderQueue(){
     if(!queue.length){
       queueEl.innerHTML = `<div class="empty">No tracks for <b>${currentEmotion || "—"}</b>.</div>`;
@@ -212,13 +200,7 @@ const firebaseConfig = {
     renderQueue();
   }
 
-  function next(){
-    if(shuffle){
-      playAt(Math.floor(Math.random()*queue.length));
-    }else{
-      playAt(index+1);
-    }
-  }
+  function next(){ shuffle ? playAt(Math.floor(Math.random()*queue.length)) : playAt(index+1); }
   function prev(){ playAt(index-1); }
 
   playBtn.onclick = ()=> audio.paused ? audio.play() : audio.pause();
@@ -231,22 +213,25 @@ const firebaseConfig = {
   audio.addEventListener("pause", ()=> playBtn.textContent="▶️ Play");
   audio.addEventListener("ended", ()=> repeat ? playAt(index) : next());
   audio.addEventListener("timeupdate", ()=>{
-    const p = audio.currentTime / Math.max(1, audio.duration);
+    const p = audio.currentTime / Math.max(1, audio.duration || 1);
     bar.style.inset = `0 ${Math.max(0,100 - p*100)}% 0 0`;
   });
 
+  // === IMPORTANT: parse your playlist.json shape { "songs": ["a.mp3", ...] } ===
   async function fetchPlaylistForEmotion(emotion){
     const url = rawUrl(`${emotion.toLowerCase()}/playlist.json`);
     const res = await fetch(url, {cache:"no-store"});
     if(!res.ok) throw new Error(`Playlist not found for ${emotion}`);
     const data = await res.json();
-    const list = Array.isArray(data) ? data : [];
-    return list.map(item=>{
-      if(typeof item === "string"){
-        return { title: decodeURIComponent(item.split("/").pop().replace(/\.[^/.]+$/,"")), url: item };
-      }else{
-        return { title: item.title || (item.url ? decodeURIComponent(item.url.split("/").pop().replace(/\.[^/.]+$/,"")) : "Track"), url: item.url };
-      }
+
+    // Accept either {songs:[...]} or a plain array [...]
+    const files = Array.isArray(data) ? data : Array.isArray(data.songs) ? data.songs : [];
+
+    return files.map(file => {
+      // build raw URL for each filename inside the emotion folder
+      const safeFile = encodeURIComponent(file).replace(/%2F/g, '/'); // keep subfolders if any
+      const url = rawUrl(`${emotion.toLowerCase()}/${safeFile}`);
+      return { title: humanize(file), url };
     });
   }
 
@@ -260,8 +245,7 @@ const firebaseConfig = {
       queue = list;
       if(!queue.length){ renderQueue(); return; }
       renderQueue();
-      if(shuffle) playAt(Math.floor(Math.random()*queue.length));
-      else playAt(0);
+      shuffle ? playAt(Math.floor(Math.random()*queue.length)) : playAt(0);
     }catch(err){
       queue = [];
       renderQueue();
@@ -273,8 +257,8 @@ const firebaseConfig = {
 
   function pickLabelFromSnapshot(v){
     if(v == null) return null;
-    if(typeof v === "string") return v;
-    if(typeof v === "object" && v.label) return v.label;
+    if(typeof v === "string") return v;               // "/currentEmotion" style
+    if(typeof v === "object" && v.label) return v.label; // alternative style
     return null;
   }
 
