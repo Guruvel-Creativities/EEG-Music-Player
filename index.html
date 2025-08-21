@@ -115,11 +115,9 @@
   /***********************
    * 1) CONFIGURE
    ***********************/
-  // GitHub
   const REPO = "Guruvel-Creativities/EEG-Music-Player"; 
   const BRANCH = "main";
 
-  // Firebase (public read recommended). You can keep this the same as before.
   const firebaseConfig = {
     apiKey: "AIzaSyAKUBe4zajk6R6kLqj2G_8ugQtjEnuPABQ",
     authDomain: "eeg-music-player.firebaseapp.com",
@@ -130,7 +128,6 @@
     appId: "1:926462980587:web:b12abf039eb40bfa11e9ae"
   };
 
-  // Support both schemas – your current is /currentEmotion; you can also switch to /emotion/current.
   const EMOTION_PATHS = ["/currentEmotion", "/emotion/current"]; 
 
   /***********************
@@ -167,13 +164,6 @@
     return `https://raw.githubusercontent.com/${REPO}/${BRANCH}/${path}`;
   }
 
-  function humanize(name){
-    return decodeURIComponent(name)
-      .replace(/\.[^/.]+$/, "")
-      .replace(/[-_]+/g, " ")
-      .replace(/\b\w/g, s => s.toUpperCase());
-  }
-
   function renderQueue(){
     if(!queue.length){
       queueEl.innerHTML = `<div class="empty">No tracks for <b>${currentEmotion || "—"}</b>.</div>`;
@@ -183,7 +173,7 @@
     queue.forEach((t,i)=>{
       const li = document.createElement("div");
       li.className = "track" + (i===index ? " active":"");
-      li.innerHTML = `<div>${t.title}</div><div class="small">${new URL(t.url).pathname.split("/").pop()}</div>`;
+      li.innerHTML = `<div>${t.title}</div><div class="small">${t.url.split("/").pop()}</div>`;
       li.onclick = ()=> playAt(i);
       queueEl.appendChild(li);
     });
@@ -217,22 +207,18 @@
     bar.style.inset = `0 ${Math.max(0,100 - p*100)}% 0 0`;
   });
 
-  // === IMPORTANT: parse your playlist.json shape { "songs": ["a.mp3", ...] } ===
+  // ✅ Your playlist.json is { "songs": [ {title,url}, ... ] }
   async function fetchPlaylistForEmotion(emotion){
     const url = rawUrl(`${emotion.toLowerCase()}/playlist.json`);
     const res = await fetch(url, {cache:"no-store"});
     if(!res.ok) throw new Error(`Playlist not found for ${emotion}`);
     const data = await res.json();
 
-    // Accept either {songs:[...]} or a plain array [...]
-    const files = Array.isArray(data) ? data : Array.isArray(data.songs) ? data.songs : [];
-
-    return files.map(file => {
-      // build raw URL for each filename inside the emotion folder
-      const safeFile = encodeURIComponent(file).replace(/%2F/g, '/'); // keep subfolders if any
-      const url = rawUrl(`${emotion.toLowerCase()}/${safeFile}`);
-      return { title: humanize(file), url };
-    });
+    const files = Array.isArray(data.songs) ? data.songs : [];
+    return files.map(song => ({
+      title: song.title,
+      url: song.url
+    }));
   }
 
   async function loadEmotion(em){
@@ -257,8 +243,8 @@
 
   function pickLabelFromSnapshot(v){
     if(v == null) return null;
-    if(typeof v === "string") return v;               // "/currentEmotion" style
-    if(typeof v === "object" && v.label) return v.label; // alternative style
+    if(typeof v === "string") return v;               
+    if(typeof v === "object" && v.label) return v.label;
     return null;
   }
 
@@ -285,4 +271,3 @@
 </script>
 </body>
 </html>
-
