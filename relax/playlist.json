@@ -1,8 +1,20 @@
 {
   "songs": [
-    "Andha-Kanna-Paathaakaa-MassTamilan.io(1).mp3",
-    "Anjathe-Jeeva.mp3",
-    "Annai-Gandhi-MassTamilan.com.mp3",
-    "Arabic-Kuthu-MassTamilan.fm.mp3",
+    {
+      "title": "Andha Kanna Paathaakaa",
+      "url": "https://yourusername.github.io/emotion-player/angry/Andha-Kanna-Paathaakaa-MassTamilan.io(1).mp3"
+    },
+    {
+      "title": "Anjathe Jeeva",
+      "url": "https://yourusername.github.io/emotion-player/angry/Anjathe-Jeeva.mp3"
+    },
+    {
+      "title": "Annai Gandhi",
+      "url": "https://yourusername.github.io/emotion-player/angry/Annai-Gandhi-MassTamilan.com.mp3"
+    },
+    {
+      "title": "Arabic Kuthu",
+      "url": "https://yourusername.github.io/emotion-player/angry/Arabic-Kuthu-MassTamilan.fm.mp3"
+    }
   ]
 }
